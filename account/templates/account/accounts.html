@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block body %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flashes">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for acc in accounts %}
+        <tr>
+            <td>{{ acc.email }}</td>
+            <td>{{ acc.role }}</td>
+            <td><a class="btn" href="/account/delete?account={{ acc.key() }}" onclick="return confirm('Are you sure?')">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="form-actions">
+    <a class="btn" href="/account/add">Add</a>
+</div>
+{% endblock %}

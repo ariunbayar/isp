@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block body %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flashes">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+<form {% block action %}{% endblock action %} method="post">
+    <dl class="dl-horizontal">
+        <dt>Server name:</dt>
+            <dd>{{ server.server_name }}</dd>
+        <dt>IP address:</dt>
+        <dd>
+            <a href="http://{{ server.ip_address }}/">{{ server.ip_address }}</a>
+        </dd>
+        <dt>Subnet mask:</dt>
+            <dd>{{ server.subnet_mask }}</dd>
+        <dt>Gateway:</dt>
+            <dd>{{ server.gateway }}</dd>
+        <dt>DNS1:</dt>
+            <dd>{{ server.dns1|default('-', true) }}</dd>
+        <dt>DNS2:</dt>
+            <dd>{{ server.dns2|default('-', true) }}</dd>
+        <dt>Expire date:</dt>
+            <dd>{{ server.expire_date }}</dd>
+        <dt>User limit:</dt>
+            <dd>{{ server.user_limit|default('-', true) }}</dd>
+    </dl>
+    <div class="form-actions" style="padding-left: 110px;">
+            <a class="btn" href="{{ url_for("server.edit", server_key=server.key()) }}">Edit</a>
+            <a class="btn" href="{{ url_for("server.delete", server_key=server.key()) }}" onclick="return confirm('Are you sure?')">Delete</a>
+    </div>
+</form>
+{% endblock %}
+

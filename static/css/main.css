@@ -1,0 +1,32 @@
+label{
+    width: 120px;
+    text-align:right;
+    display: inline-block;
+}
+
+.flashes{
+    background: #CEE5F5;
+    padding: 0.5em;
+    border: 1px solid #AACBE2;
+    list-style: none;
+}
+
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input {
+    height: auto !important;
+}

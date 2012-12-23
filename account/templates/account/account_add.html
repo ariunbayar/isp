@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from 'macros.html' import input_text %}
+{% block body %}
+<form action="" method="post" class="form-horizontal">
+    {{ input_text("Account e-mail", "email") }}
+    {{ input_text("Account role", "role") }}
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn">Save</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

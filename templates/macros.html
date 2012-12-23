@@ -1,0 +1,21 @@
+{% macro input_text(label, id, value='', error_message='') -%}
+    <div class="control-group">
+        <label class="control-label" for="{{ id }}">{{ label }}</label>
+        <div class="controls">
+            <input type="text" id="{{ id }}" placeholder="{{ label }}" value="{{ value|default("", true) }}" name="{{ id }}"/>{{ error_message|default("", true) }}
+        </div>
+    </div>
+{%- endmacro %}
+{% macro date_select(name, type, options, value) -%}
+<select name="{{ name }}_{{ type }}" class="{{ type }}">
+    {% for option in options %}
+    <option value="{{ option }}" {% if value == option %}selected="selected"{% endif %}>
+        {% if option > 9 %}
+            {{ option }}
+        {% else %}
+            0{{ option }}
+        {% endif %}
+    </option>
+    {% endfor %}
+</select>
+{%- endmacro %}
