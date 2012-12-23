@@ -1,10 +1,14 @@
 from forms import ServerForm
 from server.models import Server
+from account.models import Account
 from google.appengine.ext import db
+from google.appengine.api import mail
+from google.appengine.api.app_identity import get_application_id
 from flask import request, redirect, url_for, \
-    render_template, Blueprint, abort, flash
+    render_template, Blueprint, abort, flash, make_response, current_app as app
 from helpers import get_server
 from decorator import check_login
+import datetime
 
 
 server_blueprint = Blueprint('server', __name__, template_folder='templates')
@@ -66,3 +70,25 @@ def edit(account, server_key):
        
     return render_template('/server/form.html', form=form,
                 server=server.key(), account=account)
+
+
+@server_blueprint.route('/tasks/expiry')
+def expiry():
+    ub_now = datetime.datetime.now() + datetime.timedelta(hours=app.config['TIMEZONE'])
+    ub_today = ub_now.date()
+    last_min = datetime.time(23, 59)
+    sender = 'no-reply@' + get_application_id() + '.appspotmail.com'
+    site_url = 'http://' + get_application_id() + '.appspot.com'
+    tomorrow = datetime.datetime.combine(ub_today, last_min)
+    servers = Server.all().filter("expire_date <=", tomorrow)
+    accounts = Account.all()
+    for server in servers:
+        for account in accounts:
+            message = mail.EmailMessage(sender=sender, to=account.email)
+            message.subject = "Server expire notification: %s" % server.server_name
+            message.body = "Server will expire at %s\n" \
+                            "%s%s" % (server.expire_date, site_url,
+                                    url_for('server.show', server_key=server.key()))
+            message.send()
+
+    return make_response('hello')

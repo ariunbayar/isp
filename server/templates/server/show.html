@@ -25,8 +25,14 @@
             <dd>{{ server.dns1|default('-', true) }}</dd>
         <dt>DNS2:</dt>
             <dd>{{ server.dns2|default('-', true) }}</dd>
-        <dt>Expire date:</dt>
-            <dd>{{ server.expire_date }}</dd>
+        <dt >Expire date:</dt>
+        <dd>{{ server.expire_date }}
+            {% if server.is_expired() %}
+                <span class="label label-important">expired</span> 
+            {% elif server.is_expires_today() %}
+                <span class="label label-warning">today</span>
+            {% endif %}
+        </dd>
         <dt>User limit:</dt>
             <dd>{{ server.user_limit|default('-', true) }}</dd>
     </dl>
