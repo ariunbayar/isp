@@ -43,10 +43,19 @@
             </dd>
         <dt>User limit:</dt>
             <dd>{{ server.user_limit|default('-', true) }}</dd>
-    </dl>
-    <div class="form-actions" style="padding-left: 110px;">
+        </dl>
+        {% for login_info in server.login_infos %}
+            <dt>User</dt>
+                <dd>{{ login_info.username }}</dd>
+            <dt>URL</dt>
+            <dd><a href="{{ login_info.url }}">{{ login_info.url }}</a></dd>
+            <dt>Password</dt>
+                <dd>{{ login_info.password }}</dd>
+        {% endfor %}
+    <div class="form-actions" style="padding-left: 80px;">
             <a class="btn" href="{{ url_for("server.edit", server_key=server.key()) }}">Edit</a>
             <a class="btn" href="{{ url_for("server.delete", server_key=server.key()) }}" onclick="return confirm('Are you sure?')">Delete</a>
+            <a class="btn" href="{{ url_for("server.update", server_key=server.key()) }}">Add login info</a>
     </div>
 </form>
 {% endblock %}

@@ -26,3 +26,10 @@ class Server(db.Model):
         ub_today = ub_now.date()
         last_min = time(23, 59)
         return self.expire_date <= datetime.combine(ub_today, last_min)
+
+
+class LoginInfo(db.Model):
+    url = db.StringProperty()
+    username = db.StringProperty()
+    password = db.StringProperty()
+    server = db.ReferenceProperty(Server, collection_name='login_infos')
