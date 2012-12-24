@@ -21,6 +21,7 @@
             <div class="span2 well">
                 <ul class="nav nav-list">
                     <li {% if request.path == "/" %}class="active"{% endif %}><a href="{{ url_for("index") }}">Home</a></li>
+                    <li class="divider"></li>
                     {% for server in servers %}
                     <li {% if server.key()~"" == server_key~"" %}class="active"{% endif %}><a href="{{ url_for("server.show", server_key=server.key()) }}">{{ server.server_name }}</a></li>
                     {% endfor %}
