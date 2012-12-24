@@ -1,62 +1,72 @@
 {% extends "base.html" %}
 {% block body %}
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul class="flashes">
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
-<form {% block action %}{% endblock action %} method="post">
-    <dl class="dl-horizontal">
-        <dt>Server name:</dt>
-            <dd>{{ server.server_name }}</dd>
-        <dt>IP address:</dt>
-        <dd>
-            <a href="http://{{ server.ip_address }}/">{{ server.ip_address }}</a>
-        </dd>
-        <dt>Subnet mask:</dt>
-            <dd>{{ server.subnet_mask }}</dd>
-        <dt>Gateway:</dt>
-            <dd>{{ server.gateway }}</dd>
-        <dt>DNS1:</dt>
-            <dd>{{ server.dns1|default('-', true) }}</dd>
-        <dt>DNS2:</dt>
-            <dd>{{ server.dns2|default('-', true) }}</dd>
-        <dt>Cisco IP address</dt>
-            <dd>{{ server.cisco_ip_address }}</dd>
-        <dt>Cisco Subnet mask</dt>
-            <dd>{{ server.cisco_subnet_mask }}</dd>
-        <dt>Cisco Gateway</dt>
-            <dd>{{ server.cisco_gateway }}</dd>
-        <dt>Cisco IP range</dt>
-            <dd>{{ server.cisco_ip_range }}</dd>
-        <dt >Expire date:</dt>
-            <dd>{{ server.expire_date }}
-                {% if server.is_expired() %}
-                    <span class="label label-important">expired</span> 
-                {% elif server.is_expires_today() %}
-                    <span class="label label-warning">today</span>
-                {% endif %}
-            </dd>
-        <dt>User limit:</dt>
-            <dd>{{ server.user_limit|default('-', true) }}</dd>
-        </dl>
-        {% for login_info in server.login_infos %}
-            <dt>User</dt>
-                <dd>{{ login_info.username }}</dd>
-            <dt>URL</dt>
-            <dd><a href="{{ login_info.url }}">{{ login_info.url }}</a></dd>
-            <dt>Password</dt>
-                <dd>{{ login_info.password }}</dd>
-        {% endfor %}
-    <div class="form-actions" style="padding-left: 80px;">
-            <a class="btn" href="{{ url_for("server.edit", server_key=server.key()) }}">Edit</a>
-            <a class="btn" href="{{ url_for("server.delete", server_key=server.key()) }}" onclick="return confirm('Are you sure?')">Delete</a>
-            <a class="btn" href="{{ url_for("server.update", server_key=server.key()) }}">Add login info</a>
-    </div>
-</form>
+<h2>{{ server.server_name }}</h2>
+
+<dl class="dl-horizontal">
+    <dt>Radius config:</dt>
+    <dd>
+        <p> IP: {{ server.ip_address }}<br/>
+            Subnet: {{ server.subnet_mask }}<br/>
+            Gateway: {{ server.gateway }}</p>
+    </dd>
+
+    <dt>Cisco config:</dt>
+    <dd>
+        <p>IP: {{ server.cisco_ip_address }} <br />
+        Subnet: {{ server.cisco_subnet_mask }} <br />
+        Gateway: {{ server.cisco_gateway }} <br />
+        IP Range: {{ server.cisco_ip_range }}</p>
+    </dd>
+
+    <dt>DNS:</dt>
+    <dd>
+        <p> {{ server.dns1|default('-', true) }} <br />
+        {{ server.dns2|default('-', true) }}</p>
+    </dd>
+
+    <dt>Expire date:</dt>
+    <dd>
+        <p>{{ server.expire_date }}
+        {% if server.is_expired() %}
+            <span class="label label-important">expired</span> 
+        {% elif server.is_expires_today() %}
+            <span class="label label-warning">today</span>
+        {% endif %}
+        </p>
+    </dd>
+
+    <dt>User limit:</dt>
+    <dd><p>{{ server.user_limit|default('-', true) }}</p></dd>
+
+    <dt>Login details:</dt>
+    <dd>
+        <table class="table table-striped table-condensed" style="width:auto">
+            <thead>
+                <tr>
+                    <th>URL</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for login_info in server.login_infos %}
+                <tr>
+                    <td> {{ login_info.url|urlize(30) }}</td>
+                    <td> {{ login_info.username }} </td>
+                    <td> {{ login_info.password }} </td>
+                    <td> <a href="{{ url_for("server.delete_login_info", login_info_key=login_info.key()) }}" class="btn btn-mini" onclick="return confirm('Are you sure?')">delete</a> </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </dd>
+</dl>
+
+<div class="form-actions" style="padding-left: 80px;">
+    <a class="btn span2" href="{{ url_for("server.edit", server_key=server.key()) }}">Edit</a>
+    <a class="btn span2" href="{{ url_for("server.update_login_info", server_key=server.key()) }}">Add login info</a>
+    <a class="btn span2" href="{{ url_for("server.delete", server_key=server.key()) }}" onclick="return confirm('Are you sure?')">Delete</a>
+</div>
 {% endblock %}
 
