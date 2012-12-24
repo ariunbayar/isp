@@ -14,3 +14,9 @@ class ServerForm(Form):
     cisco_subnet_mask = TextField(u'Cisco Subnet mask', validators=[validators.required(), validators.IPAddress()])
     cisco_gateway = TextField(u'Cisco Gateway', validators=[validators.required(), validators.IPAddress()])
     cisco_ip_range = TextField(u'Cisco IP range', validators=[validators.required(), validators.IPAddress()])
+
+
+class LoginInfoForm(Form):
+    url = TextField(u'URL', validators=[validators.required()])
+    username = TextField(u'User name', validators=[validators.required()])
+    password = TextField(u'Password', validators=[validators.required()])

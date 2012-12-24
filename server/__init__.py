@@ -1,5 +1,5 @@
-from forms import ServerForm
-from server.models import Server
+from forms import ServerForm, LoginInfoForm
+from server.models import Server, LoginInfo
 from account.models import Account
 from google.appengine.ext import db
 from google.appengine.api import mail
@@ -35,10 +35,9 @@ def add(account):
 def show(account, server_key):
     server = get_server(server_key)
     if server is None:
-        return
+        return abort(404)
 
-    return render_template('server/show.html', account=account,
-            server=server)
+    return render_template('server/show.html', account=account, server=server)
 
 
 @server_blueprint.route('/server/<server_key>/delete')
@@ -92,3 +91,22 @@ def expiry():
             message.send()
 
     return make_response('hello')
+
+
+@server_blueprint.route('/server/<server_key>/update_login', methods=['GET','POST'])
+@check_login
+def update(account, server_key):
+    if request.method == 'POST':
+        form = LoginInfoForm(request.form)
+        if form.validate():
+            server = get_server(server_key)
+            login_info = LoginInfo()
+            form.populate_obj(login_info)
+            login_info.server = server
+            login_info.put()
+            flash(u'Login info updated!')
+            return redirect(url_for('server.show', server_key=server.key()))
+    else:
+        form = LoginInfoForm()
+
+    return render_template('server/form.html', form=form, account=account)
