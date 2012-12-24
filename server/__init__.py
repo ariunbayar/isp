@@ -68,7 +68,7 @@ def edit(account, server_key):
         form = ServerForm(**db.to_dict(server))
        
     return render_template('/server/form.html', form=form,
-                server=server.key(), account=account)
+                server_key=server.key(), account=account)
 
 
 @server_blueprint.route('/tasks/expiry')

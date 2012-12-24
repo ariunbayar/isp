@@ -13,20 +13,22 @@
     {% endblock %}
 </head>
 <body>
+    {% if server %}
+        {% set server_key = server.key() %}
+    {% endif %}
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 well">
                 <ul class="nav nav-list">
-                    <li class="active"><a href="/">Home</a></li>
-                    <li class="nav-header">Servers</li>
+                    <li {% if request.path == "/" %}class="active"{% endif %}><a href="{{ url_for("index") }}">Home</a></li>
                     {% for server in servers %}
-                    <li><a href="{{ url_for("server.show", server_key=server.key()) }}">{{ server.server_name }}</a></li>
+                    <li {% if server.key()~"" == server_key~"" %}class="active"{% endif %}><a href="{{ url_for("server.show", server_key=server.key()) }}">{{ server.server_name }}</a></li>
                     {% endfor %}
                     <li class="divider"></li>
+                    <li {% if request.path == "/server/add" %}class="active"{% endif %}><a href="{{ url_for("server.add") }}">Add New Server</a></li>
                     {% if account.is_admin() %}
-                    <li><a href="{{ url_for("account.list") }}">Accounts</a>
+                    <li {% if request.path.startswith("/account") %}class="active"{% endif %}><a href="{{ url_for("account.list") }}">Accounts</a>
                     {% endif %}
-                    <li><a href="{{ url_for("server.add") }}">Add New Server</a></li>
                     <li class="divider"></li>
                     <li><a href="{{ logout_url }}">Logout</a></li>
                 </ul>
