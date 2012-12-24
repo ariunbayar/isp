@@ -25,14 +25,22 @@
             <dd>{{ server.dns1|default('-', true) }}</dd>
         <dt>DNS2:</dt>
             <dd>{{ server.dns2|default('-', true) }}</dd>
+        <dt>Cisco IP address</dt>
+            <dd>{{ server.cisco_ip_address }}</dd>
+        <dt>Cisco Subnet mask</dt>
+            <dd>{{ server.cisco_subnet_mask }}</dd>
+        <dt>Cisco Gateway</dt>
+            <dd>{{ server.cisco_gateway }}</dd>
+        <dt>Cisco IP range</dt>
+            <dd>{{ server.cisco_ip_range }}</dd>
         <dt >Expire date:</dt>
-        <dd>{{ server.expire_date }}
-            {% if server.is_expired() %}
-                <span class="label label-important">expired</span> 
-            {% elif server.is_expires_today() %}
-                <span class="label label-warning">today</span>
-            {% endif %}
-        </dd>
+            <dd>{{ server.expire_date }}
+                {% if server.is_expired() %}
+                    <span class="label label-important">expired</span> 
+                {% elif server.is_expires_today() %}
+                    <span class="label label-warning">today</span>
+                {% endif %}
+            </dd>
         <dt>User limit:</dt>
             <dd>{{ server.user_limit|default('-', true) }}</dd>
     </dl>

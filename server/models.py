@@ -12,6 +12,10 @@ class Server(db.Model):
     dns2 = db.StringProperty()
     user_limit = db.IntegerProperty(default=None)
     expire_date = db.DateTimeProperty()
+    cisco_ip_address = db.StringProperty()
+    cisco_subnet_mask = db.StringProperty()
+    cisco_gateway = db.StringProperty()
+    cisco_ip_range = db.StringProperty()
 
     def is_expired(self):
         ub_now = datetime.now() + timedelta(hours=app.config['TIMEZONE'])
