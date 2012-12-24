@@ -23,9 +23,9 @@
                     {% endfor %}
                     <li class="divider"></li>
                     {% if account.is_admin() %}
-                    <li><a href="/account/list">Accounts</a>
+                    <li><a href="{{ url_for("account.list") }}">Accounts</a>
                     {% endif %}
-                    <li><a href="/server/add">Add New Server</a></li>
+                    <li><a href="{{ url_for("account.add") }}">Add New Server</a></li>
                     <li class="divider"></li>
                     <li><a href="{{ logout_url }}">Logout</a></li>
                 </ul>
