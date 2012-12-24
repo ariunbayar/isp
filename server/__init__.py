@@ -6,7 +6,7 @@ from google.appengine.api import mail
 from google.appengine.api.app_identity import get_application_id
 from flask import request, redirect, url_for, \
     render_template, Blueprint, abort, flash, make_response, current_app as app
-from helpers import get_server
+from helpers import get_server, get_login_info
 from decorator import check_login
 import datetime
 
@@ -95,11 +95,14 @@ def expiry():
 
 @server_blueprint.route('/server/<server_key>/update_login', methods=['GET','POST'])
 @check_login
-def update(account, server_key):
+def update_login_info(account, server_key):
     if request.method == 'POST':
         form = LoginInfoForm(request.form)
         if form.validate():
             server = get_server(server_key)
+            if not server:
+                return abort(404)
+
             login_info = LoginInfo()
             form.populate_obj(login_info)
             login_info.server = server
@@ -109,4 +112,18 @@ def update(account, server_key):
     else:
         form = LoginInfoForm()
 
-    return render_template('server/form.html', form=form, account=account)
+    ctx = dict(form=form, account=account, server_key=server_key)
+
+    return render_template('server/login_info_form.html', **ctx)
+
+
+@server_blueprint.route('/login_info/<login_info_key>/delete')
+@check_login
+def delete_login_info(account, login_info_key):
+    login_info = get_login_info(login_info_key)
+    server_key = login_info.server.key()
+    if login_info is not None:
+        login_info.delete()
+        flash(u'Login info deleted!')
+
+    return redirect(url_for('server.show', server_key=server_key))
