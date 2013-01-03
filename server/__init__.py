@@ -10,7 +10,6 @@ from helpers import get_server, get_login_info
 from decorator import check_login
 import datetime
 
-from old_models import Server as OldServer, Account as OldAccount
 
 server_blueprint = Blueprint('server', __name__, template_folder='templates')
 
@@ -130,19 +129,3 @@ def delete_login_info(account, login_info_key):
         flash(u'Login info deleted!')
 
     return redirect(url_for('server.show', server_key=server_key))
-
-
-@server_blueprint.route('/tasks/migrate')
-def migrate():
-    old_servers = OldServer().all()
-    old_accounts = OldAccount().all()
-
-    for old_server in old_servers:
-        server = Server(**db.to_dict(old_server))
-        server.put()
-
-    for old_account in old_accounts:
-        account = Account(**db.to_dict(old_account))
-        account.put()
-
-    return redirect(url_for('index'))

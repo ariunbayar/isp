@@ -16,6 +16,8 @@ class Server(ndb.Model):
     cisco_subnet_mask = ndb.StringProperty()
     cisco_gateway = ndb.StringProperty()
     cisco_ip_range = ndb.TextProperty()
+    blocked = ndb.BooleanProperty()
+    token = ndb.StringProperty()
 
     def is_expired(self):
         ub_now = datetime.now() + timedelta(hours=app.config['TIMEZONE'])

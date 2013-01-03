@@ -1,5 +1,5 @@
 from wtforms import (Form, TextAreaField, TextField, validators, DateTimeField,
-                     IntegerField)
+                     IntegerField, BooleanField)
 
 
 class ServerForm(Form):
@@ -15,7 +15,8 @@ class ServerForm(Form):
     cisco_subnet_mask = TextField(u'Cisco Subnet mask', validators=[validators.required(), validators.IPAddress()])
     cisco_gateway = TextField(u'Cisco Gateway', validators=[validators.required(), validators.IPAddress()])
     cisco_ip_range = TextAreaField(u'Cisco IP range', validators=[validators.required()])
-
+    blocked = BooleanField(u'Blocked', validators=[validators.optional()])
+    token = TextField(u'Token', validators=[validators.required()])
 
 class LoginInfoForm(Form):
     url = TextField(u'URL', validators=[validators.required()])

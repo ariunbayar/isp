@@ -36,12 +36,27 @@
         </p>
     </dd>
 
+    <dt>Blocked:</dt>
+    <dd>
+        {% if server.blocked %}
+        <span class="label label-important">Blocked</span>
+        {% else %}
+        -
+        {% endif %}
+    </dd>
+
     <dt>User limit:</dt>
     <dd><p>{{ server.user_limit|default('-', true) }}</p></dd>
+
+    <dt>Token:</dt>
+    <dd>
+    <p>{{ server.token }}</p>
+    </dd>
 
     <dt>Login details:</dt>
     <dd>
         <table class="table table-striped table-condensed" style="width:auto">
+            {% if server.login_infos().count() %}
             <thead>
                 <tr>
                     <th>URL</th>
@@ -50,14 +65,17 @@
                     <th></th>
                 </tr>
             </thead>
+            {% else %}
+            -
+            {% endif %}
             <tbody>
                 {% for login_info in server.login_infos() %}
-                <tr>
-                    <td> {{ login_info.url|urlize(30) }}</td>
-                    <td> {{ login_info.username }} </td>
-                    <td> {{ login_info.password }} </td>
-                    <td> <a href="{{ url_for("server.delete_login_info", login_info_key=login_info.key.urlsafe()) }}" class="btn btn-mini" onclick="return confirm('Are you sure?')">delete</a> </td>
-                </tr>
+                    <tr>
+                        <td> {{ login_info.url|urlize(30) }}</td>
+                        <td> {{ login_info.username }} </td>
+                        <td> {{ login_info.password }} </td>
+                        <td> <a href="{{ url_for("server.delete_login_info", login_info_key=login_info.key.urlsafe()) }}" class="btn btn-mini" onclick="return confirm('Are you sure?')">delete</a> </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
