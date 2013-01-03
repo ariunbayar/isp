@@ -14,7 +14,7 @@
 </head>
 <body>
     {% if server %}
-        {% set server_key = server.key() %}
+        {% set server_key = server.key.urlsafe() %}
     {% endif %}
     <div class="container-fluid">
         <div class="row-fluid">
@@ -23,7 +23,7 @@
                     <li {% if request.path == "/" %}class="active"{% endif %}><a href="{{ url_for("index") }}">Home</a></li>
                     <li class="divider"></li>
                     {% for server in servers %}
-                    <li {% if server.key()~"" == server_key~"" %}class="active"{% endif %}><a href="{{ url_for("server.show", server_key=server.key()) }}">{{ server.server_name }}</a></li>
+                    <li {% if server.key.urlsafe() == server_key %}class="active"{% endif %}><a href="{{ url_for("server.show", server_key=server.key.urlsafe()) }}">{{ server.server_name }}</a></li>
                     {% endfor %}
                     <li class="divider"></li>
                     <li {% if request.path == "/server/add" %}class="active"{% endif %}><a href="{{ url_for("server.add") }}">Add New Server</a></li>
@@ -37,8 +37,7 @@
             <div class="span10">
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
-                        <div class="alert">
-                        {% for message in messages %}
+                        <div class="alert"> {% for message in messages %}
                             <button type="button" class="close">&times;</button>
                             <strong>{{ message }}</strong>
                         {% endfor %}

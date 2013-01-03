@@ -28,7 +28,7 @@ def forbidden(e):
 @app.context_processor
 def inject_servers():
     context = {}
-    context['servers'] = Server.all()
+    context['servers'] = Server.query()
     context['logout_url'] = users.create_logout_url("/")
     #template_values['is_admin'] = (account.role == "admin")
     return context

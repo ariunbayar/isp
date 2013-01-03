@@ -1,4 +1,4 @@
-{% set server_key = server.key() %}
+{% set server_key = server.key.urlsafe() %}
 {% extends "base.html" %}
 {% block body %}
 <h2>{{ server.server_name }}</h2>
@@ -51,12 +51,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for login_info in server.login_infos %}
+                {% for login_info in server.login_infos() %}
                 <tr>
                     <td> {{ login_info.url|urlize(30) }}</td>
                     <td> {{ login_info.username }} </td>
                     <td> {{ login_info.password }} </td>
-                    <td> <a href="{{ url_for("server.delete_login_info", login_info_key=login_info.key()) }}" class="btn btn-mini" onclick="return confirm('Are you sure?')">delete</a> </td>
+                    <td> <a href="{{ url_for("server.delete_login_info", login_info_key=login_info.key.urlsafe()) }}" class="btn btn-mini" onclick="return confirm('Are you sure?')">delete</a> </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -65,9 +65,9 @@
 </dl>
 
 <div class="form-actions" style="padding-left: 80px;">
-    <a class="btn span2" href="{{ url_for("server.edit", server_key=server.key()) }}">Edit</a>
-    <a class="btn span2" href="{{ url_for("server.update_login_info", server_key=server.key()) }}">Add login info</a>
-    <a class="btn span2" href="{{ url_for("server.delete", server_key=server.key()) }}" onclick="return confirm('Are you sure?')">Delete</a>
+    <a class="btn span2" href="{{ url_for("server.edit", server_key=server.key.urlsafe()) }}">Edit</a>
+    <a class="btn span2" href="{{ url_for("server.update_login_info", server_key=server.key.urlsafe()) }}">Add login info</a>
+    <a class="btn span2" href="{{ url_for("server.delete", server_key=server.key.urlsafe()) }}" onclick="return confirm('Are you sure?')">Delete</a>
 </div>
 {% endblock %}
 

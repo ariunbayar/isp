@@ -1,22 +1,21 @@
-from server.models import Server, LoginInfo
 from account.models import Account
-from google.appengine.ext.db import BadKeyError
+from google.appengine.ext import ndb
 
 
 def get_account(email):
-    account = Account().all().filter("email =", email).get()
+    account = Account.query().filter(Account.email==email).get()
     return account
  
 def get_server(encoded_key):
     try:
-        server = Server.get(encoded_key)
+        server = ndb.Key(urlsafe=encoded_key).get()
         return server
-    except BadKeyError:
+    except Exception:
         return None
 
 def get_login_info(encoded_key):
     try:
-        login_info = LoginInfo.get(encoded_key)
+        login_info = ndb.Key(urlsafe=encoded_key).get()
         return login_info
-    except BadKeyError:
+    except Exception:
         return None

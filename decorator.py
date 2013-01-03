@@ -10,7 +10,7 @@ def check_login(fn):
         user = users.get_current_user()
         if user:
             email = user.email()
-            account = Account.all().filter('email =', email.lower()).get()
+            account = Account.query().filter(Account.email==email.lower()).get()
             if isinstance(account, Account):
                 kwargs.update({'account': account})
                 return fn(*args, **kwargs)

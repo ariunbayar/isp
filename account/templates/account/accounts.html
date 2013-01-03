@@ -13,7 +13,7 @@
         <tr>
             <td>{{ acc.email }}</td>
             <td>{{ acc.role }}</td>
-            <td><a class="btn" href="/account/delete?account={{ acc.key() }}" onclick="return confirm('Are you sure?')">Delete</a></td>
+            <td><a class="btn" href="/account/delete?account={{ acc.key.urlsafe() }}" onclick="return confirm('Are you sure?')">Delete</a></td>
         </tr>
         {% endfor %}
     </tbody>

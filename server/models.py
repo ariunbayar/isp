@@ -1,21 +1,21 @@
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from datetime import datetime, timedelta, time
 from flask import current_app as app
 
 
-class Server(db.Model):
-    server_name = db.StringProperty()
-    ip_address = db.StringProperty()
-    subnet_mask = db.StringProperty()
-    gateway = db.StringProperty()
-    dns1 = db.StringProperty()
-    dns2 = db.StringProperty()
-    user_limit = db.IntegerProperty(default=None)
-    expire_date = db.DateTimeProperty()
-    cisco_ip_address = db.StringProperty()
-    cisco_subnet_mask = db.StringProperty()
-    cisco_gateway = db.StringProperty()
-    cisco_ip_range = db.TextProperty()
+class Server(ndb.Model):
+    server_name = ndb.StringProperty()
+    ip_address = ndb.StringProperty()
+    subnet_mask = ndb.StringProperty()
+    gateway = ndb.StringProperty()
+    dns1 = ndb.StringProperty()
+    dns2 = ndb.StringProperty()
+    user_limit = ndb.IntegerProperty(default=None)
+    expire_date = ndb.DateTimeProperty()
+    cisco_ip_address = ndb.StringProperty()
+    cisco_subnet_mask = ndb.StringProperty()
+    cisco_gateway = ndb.StringProperty()
+    cisco_ip_range = ndb.TextProperty()
 
     def is_expired(self):
         ub_now = datetime.now() + timedelta(hours=app.config['TIMEZONE'])
@@ -27,9 +27,12 @@ class Server(db.Model):
         last_min = time(23, 59)
         return self.expire_date <= datetime.combine(ub_today, last_min)
 
+    def login_infos(self):
+        return LoginInfo.query().filter(LoginInfo.server==self.key)
 
-class LoginInfo(db.Model):
-    url = db.StringProperty()
-    username = db.StringProperty()
-    password = db.StringProperty()
-    server = db.ReferenceProperty(Server, collection_name='login_infos')
+
+class LoginInfo(ndb.Model):
+    url = ndb.StringProperty()
+    username = ndb.StringProperty()
+    password = ndb.StringProperty()
+    server = ndb.KeyProperty(Server)
