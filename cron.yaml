@@ -1,9 +1,9 @@
 cron:
-- description: every day
-  url: /tasks/expiry
+- description: when expire date reached
+  url: /tasks/check-expire-date
   schedule: every day 01:00
 
 cron:
-- description: every day
-  url: /tasks/expiry
+- description: when user limit reached
+  url: /tasks/check-user_limit
   schedule: every day 01:00
