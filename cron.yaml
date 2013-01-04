@@ -2,3 +2,8 @@ cron:
 - description: every day
   url: /tasks/expiry
   schedule: every day 01:00
+
+cron:
+- description: every day
+  url: /tasks/expiry
+  schedule: every day 01:00
