@@ -141,8 +141,6 @@ def check_server_user_limit():
                 url = 'http://%s/manager/user_count/%s'\
                       % (server.ip_address, server.token)
                 result = fetch_server_url(url=url, retry_count=3)
-                import logging
-                logging.error(result.content)
                 if result.status_code == 200:
                     user_count = result.content
 
