@@ -3,7 +3,6 @@ cron:
   url: /tasks/check-expire-date
   schedule: every day 01:00
 
-cron:
 - description: when user limit reached
   url: /tasks/check-user_limit
   schedule: every day 01:00
