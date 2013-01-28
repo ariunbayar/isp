@@ -27,53 +27,48 @@ def fetch_server_url(url, retry_count):
 @server_blueprint.route('/tasks/server-expired', methods=['POST'])
 def server_expired():
     server = get_server(request.form['server'])
-    import logging
-    logging.error('------------------------')
-    logging.error('server %s is expired just now' % server.server_name)
+    sender = 'no-reply@' + get_application_id() + '.appspotmail.com'
+    site_url = 'http://' + get_application_id() + '.appspot.com'
+    for account in Account.query():
+        message = mail.EmailMessage(sender=sender, to=account.email)
+        message.subject = "Server expire notification: %s" % server.server_name
+        show_url = url_for('server.show', server_key=server.key.urlsafe())
+        message_body = "Server %s is expired at %s\n %s%s" \
+                       % (server.server_name, server.expire_date,
+                          site_url, show_url)
+
+        if server.blocked:
+            url = 'http://%s/manager/expired/%s'\
+                    % (server.ip_address, server.token)
+            result = fetch_server_url(url=url, retry_count=3)
+            if result.status_code == 200:
+                if result.content == 'TRUE':
+                    message_body += '\n Server %s is blocked upon expiry, %s'\
+                                    % (server.server_name, server.expire_date)
+                else:
+                    message_body += '\n %s' % result.content
+            else:
+                message_body += '\n Unable to reach %s to block upon expiry, %s'\
+                                % (server.server_name, server.expire_date)
+
+        message.body = message_body
+        message.send()
+
     return make_response('')
 
 
 @server_blueprint.route('/tasks/schedule-server-expiry')
 def check_server_expire_date():
     today = current_datetime().date()
-    sender = 'no-reply@' + get_application_id() + '.appspotmail.com'
-    site_url = 'http://' + get_application_id() + '.appspot.com'
     first_min = datetime.datetime.combine(today, datetime.time(0, 0))
     last_min = datetime.datetime.combine(today, datetime.time(23, 59))
 
     servers = Server.query().filter(Server.expire_date<=last_min)\
                             .filter(Server.expire_date>=first_min)
-    accounts = Account.query()
     for server in servers:
         expired_url = url_for('server.server_expired')
         run_task_at(expired_url, server.expire_date,
                     server=server.key.urlsafe())
-        continue
-        # 
-        for account in accounts:
-            message = mail.EmailMessage(sender=sender, to=account.email)
-            message.subject = "Server expire notification: %s" % server.server_name
-            show_url = url_for('server.show', server_key=server.key.urlsafe())
-            message_body = "Server %s is expired at %s\n %s%s" \
-                           % (server.server_name, server.expire_date,
-                              site_url, show_url)
-
-            if server.blocked:
-                url = 'http://%s/manager/expired/%s'\
-                % (server.ip_address, server.token)
-                result = fetch_server_url(url=url, retry_count=3)
-                if result.status_code == 200:
-                    if result.content == 'TRUE':
-                        message_body += '\n Server %s is blocked upon expiry, %s'\
-                                        % (server.server_name, server.expire_date)
-                    else:
-                        message_body += '\n %s' % result.content
-                else:
-                    message_body += '\n Unable to reach %s to block upon expiry, %s'\
-                                    % (server.server_name, server.expire_date)
-
-            message.body = message_body
-            message.send()
 
     return make_response('')
 
