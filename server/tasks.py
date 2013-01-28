@@ -2,10 +2,11 @@ import datetime
 import time
 
 from account.models import Account
+from helpers import get_server, current_datetime, run_task_at
 from server import server_blueprint
 from server.models import Server
 
-from flask import make_response, current_app as app, url_for
+from flask import make_response, url_for, request
 from google.appengine.api import mail, urlfetch
 from google.appengine.api.app_identity import get_application_id
 
@@ -23,17 +24,32 @@ def fetch_server_url(url, retry_count):
     return result
 
 
-@server_blueprint.route('/tasks/check-expire-date')
+@server_blueprint.route('/tasks/server-expired', methods=['POST'])
+def server_expired():
+    server = get_server(request.form['server'])
+    import logging
+    logging.error('------------------------')
+    logging.error('server %s is expired just now' % server.server_name)
+    return make_response('')
+
+
+@server_blueprint.route('/tasks/schedule-server-expiry')
 def check_server_expire_date():
-    ub_now = datetime.datetime.now() + datetime.timedelta(hours=app.config['TIMEZONE'])
-    ub_today = ub_now.date()
-    last_min = datetime.time(23, 59)
+    today = current_datetime().date()
     sender = 'no-reply@' + get_application_id() + '.appspotmail.com'
     site_url = 'http://' + get_application_id() + '.appspot.com'
-    tomorrow = datetime.datetime.combine(ub_today, last_min)
-    servers = Server.query().filter(Server.expire_date<=tomorrow)
+    first_min = datetime.datetime.combine(today, datetime.time(0, 0))
+    last_min = datetime.datetime.combine(today, datetime.time(23, 59))
+
+    servers = Server.query().filter(Server.expire_date<=last_min)\
+                            .filter(Server.expire_date>=first_min)
     accounts = Account.query()
     for server in servers:
+        expired_url = url_for('server.server_expired')
+        run_task_at(expired_url, server.expire_date,
+                    server=server.key.urlsafe())
+        continue
+        # 
         for account in accounts:
             message = mail.EmailMessage(sender=sender, to=account.email)
             message.subject = "Server expire notification: %s" % server.server_name

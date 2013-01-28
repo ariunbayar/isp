@@ -1,8 +1,10 @@
 cron:
 - description: when expire date reached
-  url: /tasks/check-expire-date
-  schedule: every day 01:00
+  url: /tasks/schedule-server-expiry
+  # 16:01 + 8 = 24:01 UB time
+  schedule: every day 16:01
 
 - description: when user limit reached
   url: /tasks/check-user_limit
-  schedule: every day 01:00
+  # 16:01 + 8 = 24:01 UB time
+  schedule: every day 16:01
