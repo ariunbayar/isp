@@ -59,6 +59,8 @@
             {% if server.login_infos().count() %}
             <thead>
                 <tr>
+                    <th>Title</th>
+                    <th>Protocol</th>
                     <th>URL</th>
                     <th>Username</th>
                     <th>Password</th>
@@ -71,10 +73,16 @@
             <tbody>
                 {% for login_info in server.login_infos() %}
                     <tr>
+                        <td> {{ login_info.title }}</td>
+                        <td> {{ login_info.protocol }}</td>
                         <td> {{ login_info.url|urlize(30) }}</td>
                         <td> {{ login_info.username }} </td>
                         <td> {{ login_info.password }} </td>
-                        <td> <a href="{{ url_for("server.delete_login_info", login_info_key=login_info.key.urlsafe()) }}" class="btn btn-mini" onclick="return confirm('Are you sure?')">delete</a> </td>
+                        <td>
+                            <a href="{{ url_for("server.delete_login_info", login_info_key=login_info.key.urlsafe()) }}"
+                                class="btn btn-mini delete-btn"
+                                onclick="return ask($(this).parent().parent().children(':first-child').html())">delete</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -85,7 +93,8 @@
 <div class="form-actions" style="padding-left: 80px;">
     <a class="btn span2" href="{{ url_for("server.edit", server_key=server.key.urlsafe()) }}">Edit</a>
     <a class="btn span2" href="{{ url_for("server.update_login_info", server_key=server.key.urlsafe()) }}">Add login info</a>
-    <a class="btn span2" href="{{ url_for("server.delete", server_key=server.key.urlsafe()) }}" onclick="return confirm('Are you sure?')">Delete</a>
+    <a class="btn span2" href="{{ url_for("server.delete",
+        server_key=server.key.urlsafe()) }}" onclick="return ask($('h2').html())">Delete</a>
 </div>
 {% endblock %}
 

@@ -27,3 +27,13 @@ input[type="color"],
 .container-fluid{
     padding-top: 20px;
 }
+
+#protocol li {
+    list-style-type: none;
+    float:left;
+    width: 60px;
+}
+
+#protocol li label {
+    width: auto;
+}

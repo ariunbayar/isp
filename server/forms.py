@@ -1,5 +1,6 @@
 from wtforms import (Form, TextAreaField, TextField, validators, DateTimeField,
-                     IntegerField, BooleanField)
+                     IntegerField, BooleanField, RadioField)
+from server.models import LoginInfo
 
 
 class ServerForm(Form):
@@ -19,6 +20,10 @@ class ServerForm(Form):
     token = TextField(u'Token', validators=[validators.required()])
 
 class LoginInfoForm(Form):
+    title = TextField(u'Title', validators=[validators.optional()])
+    protocol = RadioField(u'Protocol',
+                          choices=[('ssh', 'SSH'), ('http', 'HTTP')],
+                          validators=[validators.required()])
     url = TextField(u'URL', validators=[validators.required()])
     username = TextField(u'User name', validators=[validators.required()])
     password = TextField(u'Password', validators=[validators.required()])

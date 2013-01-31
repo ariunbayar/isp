@@ -10,3 +10,7 @@ $(function() {
         timeFormat: 'HH:mm'
     });
 }); 
+
+function ask(text) {
+    return confirm('You are about to delete: ' + text + '\n Are you sure?');
+}

@@ -38,3 +38,13 @@ class LoginInfo(ndb.Model):
     username = ndb.StringProperty()
     password = ndb.StringProperty()
     server = ndb.KeyProperty(Server)
+    title = ndb.StringProperty()
+
+    SSH = 'ssh'
+    HTTP = 'http'
+
+    PROTOCOL_CHOICES = [
+            SSH,
+            HTTP]
+
+    protocol = ndb.StringProperty(choices=PROTOCOL_CHOICES)
