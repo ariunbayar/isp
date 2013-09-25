@@ -105,27 +105,22 @@ def delete_login_info(account, login_info_key):
 
     return redirect(url_for('server.show', server_key=server_key))
 
-@server_blueprint.route('/login_info/<server_key>/<login_info_key>/edit', methods=['GET','POST'])
+
+@server_blueprint.route('/login_info/<login_info_key>/edit', methods=['GET','POST'])
 @check_login
-def edit_login_info(account, login_info_key, server_key):
-    server = get_server(server_key)
-    login_info = get_server(login_info_key)
+def edit_login_info(account, login_info_key):
+    login_info = get_login_info(login_info_key)
     if request.method == 'POST':
         form = LoginInfoForm(request.form)
         if form.validate():
-            if not login_info_key:
-                return abort(404)
-
             form.populate_obj(login_info)
-            login_info.server = ndb.Key(urlsafe=server_key)
             login_info.put()
             flash(u'Login info updated!')
             return redirect(url_for('server.show',
-                server_key=server.key.urlsafe()))
+                server_key=login_info.server.urlsafe()))
     else:
-        login_key = get_server(login_info_key)
-        form = LoginInfoForm(**login_key._to_dict())
+        form = LoginInfoForm(**login_info._to_dict())
 
-    ctx = dict(form=form, account=account, login_info_key=login_key, server_key=server.key.urlsafe())
+    ctx = dict(form=form, account=account, server_key=login_info.server.urlsafe())
 
-    return render_template('server/edit_login_info_form.html', **ctx)
+    return render_template('server/login_info_form.html', **ctx)
