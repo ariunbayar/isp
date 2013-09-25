@@ -18,6 +18,8 @@ class Server(ndb.Model):
     cisco_ip_range = ndb.TextProperty()
     blocked = ndb.BooleanProperty()
     token = ndb.StringProperty()
+    radius_response = ndb.PickleProperty()
+    cisco_response = ndb.PickleProperty()
 
     def is_expired(self):
         ub_now = datetime.now() + timedelta(hours=app.config['TIMEZONE'])

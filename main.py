@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for, redirect
 from google.appengine.api import users
 from server import server_blueprint
 from account import account_blueprint
@@ -14,7 +14,7 @@ app.register_blueprint(account_blueprint)
 @app.route('/')
 @check_login
 def index(account):
-    return render_template('index.html', account=account)
+    return render_template('index.html', account=account, servers=Server.query())
 
 
 @app.errorhandler(403)
