@@ -6,20 +6,19 @@ from helpers import get_server, current_datetime, run_task_at
 from server import server_blueprint
 from server.models import Server
 
-from flask import make_response, url_for, request, render_template
+from flask import make_response, url_for, request
 from google.appengine.api import mail, urlfetch
 from google.appengine.api.app_identity import get_application_id
-from decorator import check_login
 
 
 def fetch_server_url(url, retry_count):
     while retry_count:
-            result = urlfetch.fetch(url=url, deadline=10)
+        result = urlfetch.fetch(url=url, deadline=10)
 
-            if result.status_code == 200:
-                break
-            else:
-                time.sleep(5)
+        if result.status_code == 200:
+            break
+        else:
+            time.sleep(5)
             retry_count -= 1
 
     return result
@@ -128,10 +127,10 @@ def server_dashboard():
     for server in servers:
         url='http://%s/' % (server.ip_address)
         result = fetch_server_url(url=url, retry_count=3)
-        server_key = server.key.get()
-        list = server_key.radius_response
-        if len(list)==0:
-            list=[0,0,0,0,0,0,0,0,0,0]
+        list = server.radius_response or []
+        if len(list) == 0:
+            server.radius_response = [0,0,0,0,0,0,0,0,0,0]
+            server.put()
 
         elif len(list) < 20:
             if result.status_code == 200:
@@ -143,15 +142,16 @@ def server_dashboard():
             server.radius_response = list
             server.put()
         else:
-            del list[:5]
+            del list[:1]
             server.radius_response = list
             server.put()
 
         cisco_url='http://%s/' % (server.cisco_ip_address)
         cisco_result = fetch_server_url(url=cisco_url, retry_count=3)
-        response_list = server_key.cisco_response
+        response_list = server.cisco_response or []
         if len(response_list) == 0:
-            response_list = [0,0,0,0,0,0,0,0,0,0]
+            server.cisco_response = [0,0,0,0,0,0,0,0,0,0]
+            server.put()
 
         elif len(response_list) < 20:
             if cisco_result.status_code == 200:
@@ -163,7 +163,7 @@ def server_dashboard():
             server.cisco_response = response_list
             server.put()
         else:
-            del response_list[:5]
+            del response_list[:1]
             server.cisco_response = response_list
             server.put()
     return make_response('added')
