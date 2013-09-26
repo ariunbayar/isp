@@ -37,3 +37,11 @@ input[type="color"],
 #protocol li label {
     width: auto;
 }
+
+.box{
+    width: 170px;
+    height: 160px;
+    padding: 10px;
+    border: 5px solid black;
+    margin: 10px;
+}

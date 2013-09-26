@@ -13,13 +13,16 @@ from google.appengine.api.app_identity import get_application_id
 
 def fetch_server_url(url, retry_count):
     while retry_count:
-        result = urlfetch.fetch(url=url, deadline=10)
+        try:
+            result = urlfetch.fetch(url=url, deadline=10)
 
-        if result.status_code == 200:
-            break
-        else:
-            time.sleep(5)
-            retry_count -= 1
+            if result.status_code == 200:
+                break
+            else:
+                time.sleep(5)
+                retry_count -= 1
+        except Exception:
+            return None
 
     return result
 
@@ -119,51 +122,23 @@ def check_server_user_limit():
     return make_response('hello')
 
 
-@server_blueprint.route('/tasks/server-dashboard')
-def server_dashboard():
-    list = []
-    response_list = []
-    servers = Server.query()
-    for server in servers:
-        url='http://%s/' % (server.ip_address)
-        result = fetch_server_url(url=url, retry_count=3)
-        list = server.radius_response or []
-        if len(list) == 0:
-            server.radius_response = [0,0,0,0,0,0,0,0,0,0]
-            server.put()
+@server_blueprint.route('/tasks/check-connection')
+def check_connection():
+    def fetch_and_populate_connectivity(ip, connectivity):
+        result = fetch_server_url('http://%s/' % ip, retry_count=3)
+        connectivity = connectivity or [0] * 30
+        connectivity.append(1 if result and result.status_code == 200 else 0)
+        del connectivity[:1]
+        return connectivity
 
-        elif len(list) < 20:
-            if result.status_code == 200:
-                ipcount = 1
-                list.append(ipcount)
-            else:
-                ipcount = 0
-                list.append(ipcount)
-            server.radius_response = list
-            server.put()
-        else:
-            del list[:1]
-            server.radius_response = list
-            server.put()
-
-        cisco_url='http://%s/' % (server.cisco_ip_address)
-        cisco_result = fetch_server_url(url=cisco_url, retry_count=3)
-        response_list = server.cisco_response or []
-        if len(response_list) == 0:
-            server.cisco_response = [0,0,0,0,0,0,0,0,0,0]
-            server.put()
-
-        elif len(response_list) < 20:
-            if cisco_result.status_code == 200:
-                ipcount = 1
-                response_list.append(ipcount)
-            else:
-                ipcount = 0
-                response_list.append(ipcount)
-            server.cisco_response = response_list
-            server.put()
-        else:
-            del response_list[:1]
-            server.cisco_response = response_list
-            server.put()
-    return make_response('added')
+    for server in Server.query():
+        # check radius server connection
+        connectivity = fetch_and_populate_connectivity(server.ip_address,
+                                                       server.radius_response)
+        server.radius_response = connectivity
+        # check cisco server connection
+        connectivity = fetch_and_populate_connectivity(server.cisco_ip_address,
+                                                       server.cisco_response)
+        server.cisco_response = connectivity
+        server.put()
+    return make_response('')

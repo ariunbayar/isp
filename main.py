@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template
 from google.appengine.api import users
 from server import server_blueprint
 from account import account_blueprint

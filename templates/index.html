@@ -1,27 +1,19 @@
 {% extends "base.html" %}
 {% block body %}
-<style>
-    div.box{
-        width:170px;
-        height:160px;
-        padding:10px;
-        border:5px solid black;
-        margin:10px;
-    }
-</style>
+
 {% for server in servers %}
- <script type="text/javascript">
-     $(function() {
-         $(".radius").sparkline({{ server.radius_response }}, { type: 'bar',
-             chartRangeMin: 0});
-         $(".cisco").sparkline({{ server.cisco_response }}, { type: 'bar',
-             chartRangeMin: 0});
-     });
- </script>
- <div class="box">
-     <h5>{{ server.server_name }} server </h5><br>
-    <p>Radius: <span class="radius">....</span></p>
-    <p>Cisco: <span class="cisco">....</span></p>
+<script type="text/javascript">
+$(function() {
+    $("#radius{{ server.key.id() }}").sparkline({{ server.radius_response }}, { type: 'bar', chartRangeMin: 0});
+    $("#cisco{{ server.key.id() }}").sparkline({{ server.cisco_response }}, { type: 'bar', chartRangeMin: 0});
+});
+</script>
+
+<div class="box">
+    <h5>{{ server.server_name }} server </h5>
+    <p>Radius: <span id="radius{{ server.key.id() }}"></span></p>
+    <p>Cisco:  <span id="cisco{{ server.key.id() }}"></span></p>
 </div>
 {% endfor %}
+
 {% endblock %}

@@ -10,6 +10,5 @@ cron:
   schedule: every day 16:01
 
 - description: checking connection
-  url: /tasks/server-dashboard
-  # 16:01 + 8 = 24:01 UB time
-  schedule: every 1 minutes
+  url: /tasks/check-connection
+  schedule: every 10 minutes
