@@ -104,3 +104,23 @@ def delete_login_info(account, login_info_key):
         flash(u'Login info deleted!')
 
     return redirect(url_for('server.show', server_key=server_key))
+
+
+@server_blueprint.route('/login_info/<login_info_key>/edit', methods=['GET','POST'])
+@check_login
+def edit_login_info(account, login_info_key):
+    login_info = get_login_info(login_info_key)
+    if request.method == 'POST':
+        form = LoginInfoForm(request.form)
+        if form.validate():
+            form.populate_obj(login_info)
+            login_info.put()
+            flash(u'Login info updated!')
+            return redirect(url_for('server.show',
+                server_key=login_info.server.urlsafe()))
+    else:
+        form = LoginInfoForm(**login_info._to_dict())
+
+    ctx = dict(form=form, account=account, server_key=login_info.server.urlsafe())
+
+    return render_template('server/login_info_form.html', **ctx)

@@ -82,6 +82,8 @@
                             <a href="{{ url_for("server.delete_login_info", login_info_key=login_info.key.urlsafe()) }}"
                                 class="btn btn-mini delete-btn"
                                 onclick="return ask($(this).parent().parent().children(':first-child').html())">delete</a>
+                            <a href="{{ url_for("server.edit_login_info", login_info_key=login_info.key.urlsafe()) }}"
+                                class="btn btn-mini delete-btn">edit</a>
                         </td>
                     </tr>
                 {% endfor %}
