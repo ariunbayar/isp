@@ -1,5 +1,5 @@
 application: uweb-isp
-version: v2013-09-26
+version: v2014-04-08
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -7,14 +7,17 @@ threadsafe: true
 handlers:
 - url: /static
   static_dir: static
+  secure: always
 
 - url: /tasks/.*
   script: main.app
   login: admin
+  secure: always
 
 - url: /.*
   script: main.app
   login: required
+  secure: always
 
 libraries:
 - name: jinja2
